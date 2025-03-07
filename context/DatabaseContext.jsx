@@ -26,12 +26,10 @@ export function DatabaseProvider({ children }) {
     if (db) {
       const createTable = async () => {
         try {
-          await db.execAsync([
-            {
-              sql: 'CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP);',
-              args: []
-            }
-          ]);
+          // Try this approach instead
+          await db.execAsync(
+            'CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP);'
+          );
           console.log('Table created successfully');
         } catch (error) {
           console.error('Error creating table:', error);
