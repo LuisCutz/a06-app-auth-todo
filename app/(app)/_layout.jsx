@@ -19,11 +19,7 @@ export default function AppLayout() {
       <Stack.Screen 
         name="index" 
         options={{ 
-          title: 'Tasks',
-          headerShown: true,
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
+          headerShown: false
         }} 
       />
       <Stack.Screen 

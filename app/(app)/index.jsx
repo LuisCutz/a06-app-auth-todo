@@ -1,25 +1,27 @@
 import React, { useCallback } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { List, FAB, Portal, Dialog, Button, Text } from 'react-native-paper';
+import { List, FAB, Portal, Dialog, Button, Text, IconButton } from 'react-native-paper';
 import { useDatabase } from '../../context/DatabaseContext';
+import { useSession } from '../../ctx';
 
 export default function TaskList() {
   const router = useRouter();
-  const { tasks, deleteTask, fetchTasks } = useDatabase(); // 🔹 Usar `tasks` directamente del contexto
+  const { tasks, deleteTask, fetchTasks } = useDatabase();
+  const { signOut } = useSession();
   const [deleteDialogVisible, setDeleteDialogVisible] = React.useState(false);
   const [selectedTaskId, setSelectedTaskId] = React.useState(null);
 
   useFocusEffect(
     useCallback(() => {
-      fetchTasks(); // 🔹 Cargar tareas cada vez que la pantalla sea enfocada
+      fetchTasks();
     }, [])
   );
 
   const handleDeleteTask = async () => {
     try {
       await deleteTask(selectedTaskId);
-      await fetchTasks(); // 🔹 Actualizar lista después de eliminar
+      await fetchTasks();
       setDeleteDialogVisible(false);
     } catch (error) {
       Alert.alert('Error', 'Failed to delete task');
@@ -31,8 +33,23 @@ export default function TaskList() {
     setDeleteDialogVisible(true);
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    router.replace('/sign-in');
+  };
+
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Text variant="headlineMedium" style={styles.title}>Tasks</Text>
+        <IconButton
+          icon="logout"
+          mode="contained"
+          onPress={handleSignOut}
+          style={styles.logoutButton}
+        />
+      </View>
+
       {tasks.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>No tasks yet. Add your first task!</Text>
@@ -82,6 +99,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: 'white',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  title: {
+    fontWeight: 'bold',
+  },
+  logoutButton: {
+    marginLeft: 'auto',
   },
   listSection: {
     flex: 1,
