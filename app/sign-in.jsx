@@ -10,29 +10,26 @@ export default function SignIn() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Reemplaza esta URL con tu URL de la API
+  const API_URL = 'https://regular-giraffe-worthy.ngrok-free.app';
+
   const handleSignIn = async () => {
-    // Reset error state
     setError('');
 
-    // Validate empty fields
     if (!email || !password) {
       setError('Por favor complete todos los campos');
       return;
     }
 
-    // Show loading indicator
     setIsLoading(true);
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Validate credentials
-      if (email === 'usuario@ejemplo.com' && password === 'password123') {
-        await signIn();
+      const result = await signIn(email, password, API_URL);
+      
+      if (result.success) {
         router.replace('/');
       } else {
-        setError('Credenciales inválidas');
+        setError(result.error);
       }
     } catch (err) {
       setError('Error al iniciar sesión');
